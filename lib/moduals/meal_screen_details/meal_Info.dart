@@ -42,9 +42,7 @@ class MealInfo extends StatelessWidget {
                 child: IconButton(
                   onPressed: () {
                     MealsCubit.get(context).addFavorite(mealId!);
-                    showToast(
-                        text: 'Meal Add to Favorite',
-                        state: ToastStates.SUCCESS);
+
                   },
                   icon: const Icon(
                     Icons.favorite_outline,

@@ -6,6 +6,7 @@ import 'package:meals_app/moduals/favorite_screen/cubit/states.dart';
 
 import '../../../model/meal_model.dart';
 import '../../../model/user_model.dart';
+import '../../widget/component.dart';
 
 
 class MealFavoriteCubit extends Cubit<MealFavoriteStates>
@@ -24,20 +25,31 @@ class MealFavoriteCubit extends Cubit<MealFavoriteStates>
         .then((value) {
       list = [];
       value.docs.map((s) => list.add(MealModel.fromJson(s.data()))).toList();
-    }).catchError((error) {
-    });
+      print(list);
+    }).catchError((error) {});
   }
 
   Future<void> getFavMeals()async{
-    //emit(MealFavoriteLoadingState());
+    emit(MealFavoriteLoadingState());
     final auth =FirebaseAuth.instance.currentUser;
     var currentUser = auth!.uid;
-    final userData = await FirebaseFirestore.instance.collection('users').doc(currentUser).get();
-    MealsUserModel data= MealsUserModel.fromJson(userData.data());
-    data.fav!.forEach((element) {
-      favList.add(list.firstWhere((meal) => meal.mealId == element));
-      print('our list ${favList.length}');
-    });
 
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser)
+        .get()
+        .then((value){
+          MealsUserModel data= MealsUserModel.fromJson(value.data());
+          for (var element in data.fav!) {
+            favList.add(list.firstWhere((meal) => element == meal.mealId ));
+            emit(MealFavoriteSuccessState(favList));
+      }
+    }).catchError((error){
+      emit(MealFavoriteErrorState(error.toString()));
+    });
+  }
+
+  bool isFavourite(String mealId) {
+    return favList.any((element) => element.mealId == mealId);
   }
 }

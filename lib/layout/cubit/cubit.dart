@@ -65,11 +65,11 @@ class MealsCubit extends Cubit<MealsStates> {
   {
     final auth =FirebaseAuth.instance.currentUser;
     var currentUser = auth!.uid;
-    final userData=await FirebaseFirestore.instance.collection('users').doc(currentUser).get();
-    MealsUserModel data=MealsUserModel.fromJson(userData.data());
-    favorite=data.fav!;
+    final userData = await FirebaseFirestore.instance.collection('users').doc(currentUser).get();
+    MealsUserModel data = MealsUserModel.fromJson(userData.data());
+    favorite = data.fav!;
     if(favorite.contains(id)){
-      showToast(text: 'meal already in favorite ', state: ToastStates.SUCCESS );
+      showToast(text: 'Meal already in favorite ', state: ToastStates.SUCCESS );
     }else{
       favorite.add(id);
       await FirebaseFirestore.instance
@@ -77,10 +77,11 @@ class MealsCubit extends Cubit<MealsStates> {
           .doc(currentUser)
           .update({'fav':favorite})
           .then((value){
-        print('add to fav');
+        showToast(
+            text: 'Meal Add to Favorite',
+            state: ToastStates.SUCCESS);
       }).catchError((error){});
     }
   }
 
-
-}
+ }

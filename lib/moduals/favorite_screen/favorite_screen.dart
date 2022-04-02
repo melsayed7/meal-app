@@ -13,27 +13,50 @@ class FavoriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MealFavoriteCubit()..getFavMeals(),
+      create: (context) => MealFavoriteCubit()..getMeal()..getFavMeals(),
       child: BlocConsumer<MealFavoriteCubit , MealFavoriteStates>(
         listener: (context, state) {},
         builder: (context,state)
         {
           var cubit = MealFavoriteCubit.get(context);
-          return ListView.separated(
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return buildFavItem(cubit.favList[index], context);
-            },
-            separatorBuilder: (context, index) =>
-            const Divider(thickness: 1, color: Colors.black),
-            itemCount: cubit.favList.length,
-          );
+          if(state is MealFavoriteLoadingState) {
+              return const Center(
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(
+                    color: Colors.blue,
+                  ),
+                ),
+              );
+            }
+          else if (state is MealFavoriteSuccessState) {
+              return ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return buildFavItem(cubit.favList[index]);
+                },
+                separatorBuilder: (context, index) =>
+                const Divider(thickness: 1, color: Colors.black),
+                itemCount: cubit.favList.length,
+              );
+            }
+          else if (state is MealFavoriteErrorState) {
+              return const Center(
+                child: Text('error'),
+              );
+            }
+          else {
+            return Container(
+              color: Colors.white,
+            );
+          }
         },
       ),
     );
   }
 
-  Widget buildFavItem (MealModel? mealModel, context) => Padding(
+  Widget buildFavItem (MealModel? mealModel) => Padding (
     padding: const EdgeInsets.all(20.0),
     child: Row(
       children: [
@@ -82,8 +105,7 @@ class FavoriteScreen extends StatelessWidget {
                         backgroundColor: Colors.grey.withOpacity(.3),
                         child: IconButton(
                           onPressed: () {},
-                          icon:
-                          const Icon(Icons.favorite, color: Colors.red),
+                          icon: const Icon(Icons.favorite, color: Colors.red),
                         ),
                       ),
                     )

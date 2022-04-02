@@ -1,3 +1,5 @@
+import '../../../model/meal_model.dart';
+
 abstract class MealFavoriteStates {}
 
 class MealFavoriteInitialState extends MealFavoriteStates {}
@@ -5,8 +7,8 @@ class MealFavoriteInitialState extends MealFavoriteStates {}
 class MealFavoriteLoadingState extends MealFavoriteStates {}
 
 class MealFavoriteSuccessState extends MealFavoriteStates {
-  final String favorite;
-  MealFavoriteSuccessState(this.favorite);
+  final List<MealModel> mealModel;
+  MealFavoriteSuccessState(this.mealModel);
 }
 
 class MealFavoriteErrorState extends MealFavoriteStates {
